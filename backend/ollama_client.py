@@ -1,15 +1,10 @@
 import os
 import requests
+from dotenv import load_dotenv
 
 
-# Local development:
-# http://127.0.0.1:11434
-#
-# Production:
-# Set these environment variables on Render:
-# OLLAMA_URL
-# OLLAMA_MODEL
-# OLLAMA_API_KEY
+load_dotenv()
+
 
 OLLAMA_URL = os.getenv(
     "OLLAMA_URL",
@@ -27,7 +22,6 @@ OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
 def chat(messages):
     headers = {}
 
-    # Add authentication when using Ollama Cloud
     if OLLAMA_API_KEY:
         headers["Authorization"] = f"Bearer {OLLAMA_API_KEY}"
 
