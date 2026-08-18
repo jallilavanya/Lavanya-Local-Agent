@@ -9,7 +9,15 @@ function App() {
   const textareaRef = useRef(null);
   const chatRef = useRef(null);
 
-  /* ================= THEME ================= */
+  // ================================================
+  // API CONFIGURATION
+  // ================================================
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  // ================================================
+  // THEME
+  // ================================================
 
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("theme") !== "light";
@@ -27,7 +35,9 @@ function App() {
     );
   }, [darkMode]);
 
-  /* ================= AUTO SCROLL ================= */
+  // ================================================
+  // AUTO SCROLL
+  // ================================================
 
   useEffect(() => {
     if (chatRef.current) {
@@ -38,7 +48,9 @@ function App() {
     }
   }, [messages, loading]);
 
-  /* ================= SEND MESSAGE ================= */
+  // ================================================
+  // SEND MESSAGE
+  // ================================================
 
   const sendMessage = async () => {
     if (!message.trim() || loading) return;
@@ -61,8 +73,15 @@ function App() {
     setLoading(true);
 
     try {
+      // Check API URL
+      if (!API_URL) {
+        throw new Error(
+          "VITE_API_URL is not configured."
+        );
+      }
+
       const response = await fetch(
-        "http://127.0.0.1:8000/chat",
+        `${API_URL}/chat`,
         {
           method: "POST",
           headers: {
@@ -93,6 +112,8 @@ function App() {
         },
       ]);
     } catch (error) {
+      console.error("Chat error:", error);
+
       setMessages((prev) => [
         ...prev,
         {
@@ -109,11 +130,14 @@ function App() {
     }
   };
 
-  /* ================= KEYBOARD ================= */
+  // ================================================
+  // KEYBOARD
+  // ================================================
 
   const handleKeyDown = (event) => {
     // Enter = Send
     // Shift + Enter = New line
+
     if (
       event.key === "Enter" &&
       !event.shiftKey
@@ -123,7 +147,9 @@ function App() {
     }
   };
 
-  /* ================= SUGGESTIONS ================= */
+  // ================================================
+  // SUGGESTIONS
+  // ================================================
 
   const useSuggestion = (text) => {
     setMessage(text);
@@ -133,7 +159,9 @@ function App() {
     }, 50);
   };
 
-  /* ================= NEW CHAT ================= */
+  // ================================================
+  // NEW CHAT
+  // ================================================
 
   const newChat = () => {
     setMessages([]);
@@ -144,7 +172,9 @@ function App() {
     }, 50);
   };
 
-  /* ================= UI ================= */
+  // ================================================
+  // UI
+  // ================================================
 
   return (
     <div className="app">
@@ -169,12 +199,11 @@ function App() {
             </div>
 
             <div className="brand-subtitle">
-              LOCAL AGENT
+              AI AGENT
             </div>
           </div>
 
         </div>
-
 
         {/* NEW CHAT */}
 
@@ -188,7 +217,6 @@ function App() {
 
           New conversation
         </button>
-
 
         {/* MODEL */}
 
@@ -205,11 +233,11 @@ function App() {
           <div className="model-info">
 
             <div className="model-name">
-              Qwen2.5 Coder
+              Qwen / Cloud LLM
             </div>
 
             <div className="model-version">
-              3B · Local
+              AI Coding Model
             </div>
 
           </div>
@@ -217,7 +245,6 @@ function App() {
           <span className="online-dot" />
 
         </div>
-
 
         {/* WORKSPACE */}
 
@@ -238,18 +265,16 @@ function App() {
             </div>
 
             <div className="workspace-path">
-              Local workspace
+              Cloud workspace
             </div>
 
           </div>
 
         </div>
 
-
         {/* SPACER */}
 
         <div className="sidebar-spacer" />
-
 
         {/* SYSTEM STATUS */}
 
@@ -259,31 +284,30 @@ function App() {
 
             <span />
 
-            Ollama connected
+            AI service connected
 
           </div>
 
           <div className="system-details">
 
             <span>
-              CPU inference
+              Cloud inference
             </span>
 
             <span>
-              2048 ctx
+              Online
             </span>
 
           </div>
 
         </div>
 
-
         {/* FOOTER */}
 
         <div className="sidebar-footer">
 
           <span>
-            LOCAL AI
+            AI AGENT
           </span>
 
           <span>
@@ -291,13 +315,12 @@ function App() {
           </span>
 
           <span>
-            NO API KEY
+            CLOUD
           </span>
 
         </div>
 
       </aside>
-
 
       {/* =====================================================
           MAIN
@@ -305,9 +328,7 @@ function App() {
 
       <main className="main">
 
-        {/* ===================================================
-            HEADER
-        =================================================== */}
+        {/* HEADER */}
 
         <header className="header">
 
@@ -331,14 +352,13 @@ function App() {
 
                 <span className="tiny-dot" />
 
-                Running locally
+                Online
 
               </div>
 
             </div>
 
           </div>
-
 
           {/* HEADER RIGHT */}
 
@@ -367,7 +387,6 @@ function App() {
               {darkMode ? "☀" : "☾"}
             </button>
 
-
             {/* MODEL */}
 
             <div className="model-pill">
@@ -376,18 +395,17 @@ function App() {
                 ◈
               </span>
 
-              Qwen2.5-Coder 3B
+              AI Coding Model
 
             </div>
 
-
-            {/* LOCAL STATUS */}
+            {/* ONLINE STATUS */}
 
             <div className="local-pill">
 
               <span />
 
-              Local
+              Online
 
             </div>
 
@@ -395,10 +413,9 @@ function App() {
 
         </header>
 
-
-        {/* ===================================================
+        {/* =====================================================
             CHAT
-        =================================================== */}
+        ===================================================== */}
 
         <div
           className="chat"
@@ -423,13 +440,11 @@ function App() {
 
               </div>
 
-
               {/* EYEBROW */}
 
               <div className="eyebrow">
-                YOUR LOCAL CODING AGENT
+                YOUR AI CODING AGENT
               </div>
-
 
               {/* TITLE */}
 
@@ -438,15 +453,13 @@ function App() {
                 <span> great.</span>
               </h2>
 
-
               {/* DESCRIPTION */}
 
               <p className="welcome-description">
                 Ask questions, write code, debug
                 errors, or learn programming with
-                your local AI assistant.
+                your AI coding assistant.
               </p>
-
 
               {/* =================================================
                   SUGGESTIONS
@@ -486,7 +499,6 @@ function App() {
 
                 </button>
 
-
                 {/* LEARN */}
 
                 <button
@@ -518,7 +530,6 @@ function App() {
                   </span>
 
                 </button>
-
 
                 {/* DEBUG */}
 
@@ -588,7 +599,6 @@ function App() {
 
                     </div>
 
-
                     {/* MESSAGE */}
 
                     <div className="message-body">
@@ -612,10 +622,7 @@ function App() {
                 )
               )}
 
-
-              {/* =================================================
-                  THINKING INDICATOR
-              ================================================= */}
+              {/* THINKING INDICATOR */}
 
               {loading && (
 
@@ -655,10 +662,9 @@ function App() {
 
         </div>
 
-
-        {/* ===================================================
+        {/* =====================================================
             COMPOSER
-        =================================================== */}
+        ===================================================== */}
 
         <div className="composer-wrapper">
 
@@ -675,10 +681,9 @@ function App() {
                 )
               }
               onKeyDown={handleKeyDown}
-              placeholder="Ask your local coding agent..."
+              placeholder="Ask your AI coding agent..."
               rows={1}
             />
-
 
             {/* COMPOSER BOTTOM */}
 
@@ -697,7 +702,6 @@ function App() {
                 </span>
 
               </div>
-
 
               {/* SEND BUTTON */}
 
@@ -721,7 +725,6 @@ function App() {
 
           </div>
 
-
           {/* FOOTER */}
 
           <div className="footer">
@@ -735,7 +738,7 @@ function App() {
             </span>
 
             <span>
-              Powered by Ollama
+              Powered by Ollama Cloud
             </span>
 
             <span>
@@ -743,7 +746,7 @@ function App() {
             </span>
 
             <span>
-              Runs entirely on your machine
+              Cloud AI
             </span>
 
           </div>
