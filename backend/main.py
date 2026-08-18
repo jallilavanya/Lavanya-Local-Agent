@@ -15,26 +15,14 @@ app = FastAPI(title="Lavanya Local Coding Agent")
 # --------------------------------------------------
 
 # Local frontend
-allowed_origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-
-# Production frontend
-frontend_url = os.getenv("FRONTEND_URL")
-
-if frontend_url:
-    allowed_origins.append(frontend_url)
-
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 # --------------------------------------------------
 # Request model
